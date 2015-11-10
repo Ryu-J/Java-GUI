@@ -1,5 +1,6 @@
 package dev.justinh808;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.io.File;
@@ -30,11 +31,11 @@ public class GUI
      */
     public GUI(String title)
     {
-        this(title, 600, 600);
+        this(title, 600, 600, Color.BLACK);
     }
 
     /**
-     * Constructs a new GUI with the given title, width, and height.
+     * Constructs a new GUI with the given title, width, and height. Black colored background by default.
      * 
      * @param title
      *            -The title to display on the window.
@@ -44,6 +45,21 @@ public class GUI
      *            -The height of the window.
      */
     public GUI(String title, int width, int height)
+    {
+        this(title, width, height, Color.BLACK);
+    }
+
+    /**
+     * Constructs a new GUI with the given title, background Color, width, and height.
+     * 
+     * @param title
+     *            -The title to display on the window.
+     * @param width
+     *            -The width of the window.
+     * @param height
+     *            -The height of the window.
+     */
+    public GUI(String title, int width, int height, Color col)
     {
         try
         {
@@ -59,6 +75,7 @@ public class GUI
         window = new JFrame(title);
         window.setSize(width, height);
         window.setLocationRelativeTo(null);
+        window.setBackground(col);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
@@ -75,21 +92,39 @@ public class GUI
     }
 
     /**
-     * Adds a scrollable text area to the window.
+     * Adds a scrollable text area to the window. Default width and height of 550.
      * 
      * @return true if and only if the scrollable text area is added to the window.
      */
     public boolean addScrollableTextArea()
     {
-        return addScrollableTextArea(550, 550);
+        return addScrollableTextArea(550, 550, Color.WHITE, Color.BLACK);
     }
 
     /**
-     * Adds a scrollable text area to the window.
+     * Adds a scrollable text area to the window with the given width and height.
      * 
      * @return true if and only if the scrollable text area is added to the window.
      */
     public boolean addScrollableTextArea(int width, int height)
+    {
+        return addScrollableTextArea(width, height, Color.WHITE, Color.BLACK);
+    }
+
+    /**
+     * Adds a scrollable text area to the window. With the given parameters
+     * 
+     * @param width
+     *            the width of the scrollable text area
+     * @param height
+     *            the height of the scrollable text area
+     * @param fg
+     *            the foreground color of the text area
+     * @param bg
+     *            the background color of the text area
+     * @return true if and only if the scrollable text area is added to the window.
+     */
+    public boolean addScrollableTextArea(int width, int height, Color fg, Color bg)
     {
         ta = new JTextArea();
         // Text Area Set up
@@ -98,6 +133,8 @@ public class GUI
         ta.setSize(width, height);
         ta.setEditable(false);
         ta.setFont(new Font("my font", Font.TRUETYPE_FONT, 16));
+        ta.setBackground(bg);
+        ta.setForeground(fg);
         // Auto Scroll
         DefaultCaret caret = (DefaultCaret) ta.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
@@ -146,6 +183,17 @@ public class GUI
     }
 
     /**
+     * Prints the text to the window with no new line.
+     * 
+     * @param text
+     *            -The text to print to the window in Object form.
+     */
+    public void print(Object text)
+    {
+        ta.append(text.toString());
+    }
+
+    /**
      * Shows the window.
      */
     public void showWindow()
@@ -168,6 +216,22 @@ public class GUI
         window.add(exception);
         window.setVisible(true);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    /**
+     * Shows the given message in a new window.
+     * 
+     * @param msg
+     *            -The message in string form.
+     */
+    public static void showMessage(String msg)
+    {
+        window = new JFrame("Message");
+        window.setSize(500, 200);
+        window.setLocationRelativeTo(null);
+        JLabel message = new JLabel(msg, JLabel.CENTER);
+        window.add(message);
+        window.setVisible(true);
     }
 
     /**
