@@ -10,8 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultCaret;
-import dev.justinh808.FileOperationCancelledException;
 
 /**
  * @author Justin Ho
@@ -21,7 +21,7 @@ public class GUI
 {
 
     private static JFrame window;
-    private static JTextArea ta;
+    private static JTextArea textArea;
 
     /**
      * Constructs a new GUI with the given title and default width and height.
@@ -29,8 +29,7 @@ public class GUI
      * @param title
      *            -The title to display on the window.
      */
-    public GUI(String title)
-    {
+    public GUI(String title) {
         this(title, 600, 600, Color.BLACK);
     }
 
@@ -44,8 +43,7 @@ public class GUI
      * @param height
      *            -The height of the window.
      */
-    public GUI(String title, int width, int height)
-    {
+    public GUI(String title, int width, int height) {
         this(title, width, height, Color.BLACK);
     }
 
@@ -59,24 +57,39 @@ public class GUI
      * @param height
      *            -The height of the window.
      */
-    public GUI(String title, int width, int height, Color col)
-    {
-        try
-        {
-            if (System.getProperty("os.name").toLowerCase().contains("windows"))
-            {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }
-        }
-        catch (Exception e)
-        {
-            showException(e);
-        }
+    public GUI(String title, int width, int height, Color col) {
+        initLookAndFeel();
         window = new JFrame(title);
         window.setSize(width, height);
         window.setLocationRelativeTo(null);
         window.setBackground(col);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    /**
+     * Initializes the look and feel of the current UI.
+     */
+    public void initLookAndFeel() {
+        try {
+            String osName = System.getProperty("os.name").toLowerCase();
+            if (osName.contains("windows")) {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            }
+            else if (osName.contains("linux")) {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+            }
+            else {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        } catch (ClassNotFoundException e) {
+            showException(e);
+        } catch (InstantiationException e) {
+            showException(e);
+        } catch (IllegalAccessException e) {
+            showException(e);
+        } catch (UnsupportedLookAndFeelException e) {
+            showException(e);
+        }
     }
 
     /**
@@ -86,8 +99,7 @@ public class GUI
      *            The component to add to the window.
      * @return true if and only if the component was added to the window.
      */
-    public boolean add(Component comp)
-    {
+    public boolean add(Component comp) {
         return window.add(comp) != null;
     }
 
@@ -96,8 +108,7 @@ public class GUI
      * 
      * @return true if and only if the scrollable text area is added to the window.
      */
-    public boolean addScrollableTextArea()
-    {
+    public boolean addScrollableTextArea() {
         return addScrollableTextArea(550, 550, Color.WHITE, Color.BLACK);
     }
 
@@ -106,8 +117,7 @@ public class GUI
      * 
      * @return true if and only if the scrollable text area is added to the window.
      */
-    public boolean addScrollableTextArea(int width, int height)
-    {
+    public boolean addScrollableTextArea(int width, int height) {
         return addScrollableTextArea(width, height, Color.WHITE, Color.BLACK);
     }
 
@@ -124,21 +134,20 @@ public class GUI
      *            the background color of the text area
      * @return true if and only if the scrollable text area is added to the window.
      */
-    public boolean addScrollableTextArea(int width, int height, Color fg, Color bg)
-    {
-        ta = new JTextArea();
+    public boolean addScrollableTextArea(int width, int height, Color fg, Color bg) {
+        textArea = new JTextArea();
         // Text Area Set up
-        ta.setWrapStyleWord(true);
-        ta.setLineWrap(true);
-        ta.setSize(width, height);
-        ta.setEditable(false);
-        ta.setFont(new Font("my font", Font.TRUETYPE_FONT, 16));
-        ta.setBackground(bg);
-        ta.setForeground(fg);
+        textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(true);
+        textArea.setSize(width, height);
+        textArea.setEditable(false);
+        textArea.setFont(new Font("my font", Font.TRUETYPE_FONT, 16));
+        textArea.setBackground(bg);
+        textArea.setForeground(fg);
         // Auto Scroll
-        DefaultCaret caret = (DefaultCaret) ta.getCaret();
+        DefaultCaret caret = (DefaultCaret) textArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-        return window.add(new JScrollPane(ta)) != null;
+        return window.add(new JScrollPane(textArea)) != null;
     }
 
     /**
@@ -147,9 +156,8 @@ public class GUI
      * @param text
      *            -The text to print to the window.
      */
-    public void println(String text)
-    {
-        ta.append(text + "\n");
+    public void println(String text) {
+        textArea.append(text + "\n");
     }
 
     /**
@@ -158,17 +166,15 @@ public class GUI
      * @param text
      *            -The object to print to the window.
      */
-    public void println(Object text)
-    {
-        ta.append(text.toString() + "\n");
+    public void println(Object text) {
+        textArea.append(text.toString() + "\n");
     }
 
     /**
      * Prints a new line to the window.
      */
-    public void println()
-    {
-        ta.append("\n");
+    public void println() {
+        textArea.append("\n");
     }
 
     /**
@@ -177,9 +183,8 @@ public class GUI
      * @param text
      *            -The text to print to the window.
      */
-    public void print(String text)
-    {
-        ta.append(text);
+    public void print(String text) {
+        textArea.append(text);
     }
 
     /**
@@ -188,16 +193,15 @@ public class GUI
      * @param text
      *            -The text to print to the window in Object form.
      */
-    public void print(Object text)
-    {
-        ta.append(text.toString());
+    public void print(Object text) {
+        textArea.append(text.toString());
     }
 
     /**
      * Shows the window.
      */
-    public void showWindow()
-    {
+    public void showWindow() {
+//        window.pack();
         window.setVisible(true);
     }
 
@@ -207,8 +211,7 @@ public class GUI
      * @param ex
      *            -The exception in string form.
      */
-    public static void showException(Exception ex)
-    {
+    public static void showException(Exception ex) {
         window = new JFrame("Exception");
         window.setSize(500, 200);
         window.setLocationRelativeTo(null);
@@ -224,8 +227,7 @@ public class GUI
      * @param msg
      *            -The message in string form.
      */
-    public static void showMessage(String msg)
-    {
+    public static void showMessage(String msg) {
         window = new JFrame("Message");
         window.setSize(500, 200);
         window.setLocationRelativeTo(null);
@@ -242,16 +244,15 @@ public class GUI
      *             File operation cancelled.
      */
 
-    public static File getFile(String title) throws FileOperationCancelledException
-    {
-        JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle(title);
-        fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
-        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        int response = fc.showDialog(window, "use");
+    public static File getFile(String title) throws FileOperationCancelledException {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle(title);
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int response = fileChooser.showDialog(window, "use");
         if (response == JFileChooser.APPROVE_OPTION)
         {
-            return fc.getSelectedFile();
+            return fileChooser.getSelectedFile();
         }
         else
         {
@@ -268,16 +269,15 @@ public class GUI
      *             File operation cancelled.
      */
 
-    public static File getFolder(String title) throws FileOperationCancelledException
-    {
-        JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle(title);
-        fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int response = fc.showDialog(window, "use");
+    public static File getFolder(String title) throws FileOperationCancelledException {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle(title);
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int response = fileChooser.showDialog(window, "use");
         if (response == JFileChooser.APPROVE_OPTION)
         {
-            return fc.getSelectedFile();
+            return fileChooser.getSelectedFile();
         }
         else
         {
